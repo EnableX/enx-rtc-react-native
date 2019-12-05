@@ -35,27 +35,31 @@ target '<YourProjectName>' do
 
 # Pods for <YourProject>
 pod 'EnxRTCiOS'
-pod 'Socket.IO-Client-Swift', '~> 12.0.0'
+pod 'Socket.IO-Client-Swift', '~> 15.0.0'
 end
 
 ```
+4. In case if you want Autolinking then don't do step 3. Add following in podfile:
+      ...
+      pod 'enx-rtc-react-native', :path => '../node_modules/enx-rtc-react-native/ios/RNEnxRtc.podspec'
+      ...
+      
+5. Now run, `pod install`
 
-4. Now run, `pod install`
+6. After installing the EnxRTCiOS  SDK, change into your root directory of your project.
 
-5. After installing the EnxRTCiOS  SDK, change into your root directory of your project.
+7. Now run, `react-native link enx-rtc-react-native`.
 
-6. Now run, `react-native link enx-rtc-react-native`.
+8. Open `<YourProjectName>.xcworkspace` contents in XCode. This file can be found in the `ios` folder of your React Native project. 
 
-7. Open `<YourProjectName>.xcworkspace` contents in XCode. This file can be found in the `ios` folder of your React Native project. 
+9. Click `File` and `New File`
 
-7. Click `File` and `New File`
-
-8. Add an empty swift file to your project:
+10. Add an empty swift file to your project:
 * You can name this file anything i.e: `EnxInstall.swift`. This is done to set some flags in XCode so the Swift code can be used.
 
-9. Click `Create Bridging Header` when you're prompted with the following modal: `Would you like to configure an Objective-C bridging header?`
+11. Click `Create Bridging Header` when you're prompted with the following modal: `Would you like to configure an Objective-C bridging header?`
 
-10. Ensure you have enabled both camera and microphone usage by adding the following entries to your `Info.plist` file:
+12. Ensure you have enabled both camera and microphone usage by adding the following entries to your `Info.plist` file:
 
 ```
 <key>NSCameraUsageDescription</key>

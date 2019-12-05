@@ -6,7 +6,7 @@
 //  Copyright © 2019 Facebook. All rights reserved.
 //
 
-#import "EnxStream.h"
+#import "RNEnxStream.h"
 #import <Foundation/Foundation.h>
 #import <React/RCTViewManager.h>
 

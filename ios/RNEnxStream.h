@@ -10,7 +10,7 @@
 #define EnxStream_h
 #import <React/RCTView.h>
 
-@interface EnxStream : RCTView
+@interface RNEnxStream : RCTView
 @property (nonatomic, assign) NSString *streamId;
 @property (nonatomic, assign) NSString *isLocal;
 

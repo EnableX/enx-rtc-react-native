@@ -1,56 +1,64 @@
 {
-  "name": "enx-rtc-react-native",
-  "version": "1.5.0",
-  "description": "It is a react native component for Enablex users.",
-  "main": "src/index.js",
-  "scripts": {
-    "flow": "flow",
-    "flow:check": "flow check",
-    "lint": "eslint src example",
-    "jest": "jest src example",
-    "start": "nodemon --exec \"react-native start\"",
-    "test": "npm run flow && npm run lint && npm run jesp9t",
-    "format": "eslint --fix src"
-  },
-  "keywords": [
-    "react-native",
-    "enablex",
-    "enx",
-    "webrtc",
-    "ios",
-    "android",
-    "video",
-    "live",
-    "react",
-    "chat",
-    "cpass"
-  ],
-  "author": "enablex",
-  "license": "Vcloudx License, Version 1.1', :text => 'https://www.enablex.io/legals/tou/",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/enablexer/enx-rtc-react-native.git"
-  },
-  "devDependencies": {
-    "@babel/plugin-external-helpers": "^7.2.0",
-    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.2.0",
-    "eslint": "^4.6.1",
-    "eslint-config-callstack-io": "^0.4.1",
-    "flow-bin": "^0.53.0",
-    "react": "^16.3.0-alpha.1",
-    "react-native": "^0.60.4"
-  },
-  "dependencies": {
-    "axios": "^0.19.0",
-    "babel-preset-react-native": "5.0.2",
-    "nodemon": "^1.18.10",
-    "npm-install-peers": "^1.2.1",
-    "prop-types": "^15.6.0",
-    "react-devtools": "^3.6.1",
-    "react-native-axios": "^0.17.1",
-    "react-native-easy-toast": "^1.2.0",
-    "react-native-enhanced-popup-menu": "^0.6.1",
-    "react-native-navigation": "^3.3.0",
-    "underscore": "^1.9.1"
-  }
+    "name": "enx-rtc-react-native",
+    "version": "1.5.1",
+    "description": "It is a react native component for Enablex users.",
+    "main": "src/index.js",
+    "scripts": {
+        "flow": "flow",
+        "flow:check": "flow check",
+        "lint": "eslint src example",
+        "jest": "jest src example",
+        "start": "nodemon --exec \"react-native start\"",
+        "test": "npm run flow && npm run lint && npm run jesp9t",
+        "format": "eslint --fix src"
+    },
+    "keywords": [
+        "react-native",
+        "enablex",
+        "enx",
+        "webrtc",
+        "ios",
+        "android",
+        "video",
+        "live",
+        "react",
+        "chat",
+        "cpass"
+    ],
+    "author": "enablex",
+    "license": "Vcloudx License, Version 1.1', :text => 'https://www.enablex.io/legals/tou/",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/EnableX/enx-rtc-react-native.git"
+    },
+    "dependencies": {
+        "nodemon": "^1.18.10",
+        "npm-install-peers": "^1.2.1",
+        "prop-types": "^15.6.0",
+        "react-devtools": "^3.6.1",
+        "react-native-axios": "^0.17.1",
+        "react-native-easy-toast": "^1.2.0",
+        "react-native-enhanced-popup-menu": "^0.6.1",
+        "react-native-navigation": "^3.3.0",
+        "underscore": "^1.9.1",
+        "babel-preset-react-native": "5.0.2",
+        "axios": "^0.19.0",
+        "enx-rtc-react-native": "1.5.0",
+        "expo": "^35.0.0",
+        "react": "16.9.0",
+        "react-dom": "16.8.3",
+        "react-native": "0.61.5"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.6.0",
+        "babel-jest": "24.9.0",
+        "jest": "24.9.0",
+        "jetifier": "^1.6.4",
+        "metro-react-native-babel-preset": "0.56.0",
+        "react-test-renderer": "16.9.0"
+    },
+    "jest": {
+        "preset": "react-native"
+    },
+    "private": true
 }

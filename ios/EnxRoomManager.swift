@@ -1026,8 +1026,8 @@ extension EnxRoomManager : EnxPlayerDelegate
     }
     
     func didCapturedView(_ snapShot: UIImage) {
-        let imageData:NSData = snapShot.pngData()! as NSData
-        let base64String = imageData.base64EncodedString(options: NSData.Base64EncodingOptions(rawValue: 0))
-        self.emitEvent(event: "room:didCapturedView", data: base64String)
+       // let imageData:NSData = snapShot.pngData()! as NSData
+//        let base64String = imageData.base64EncodedString(options: NSData.Base64EncodingOptions(rawValue: 0))
+//        self.emitEvent(event: "room:didCapturedView", data: base64String)
     }
 }
