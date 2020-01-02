@@ -118,9 +118,16 @@ RCT_EXTERN_METHOD(captureScreenShot:(NSString *)streamId)
 // Send message at Room level.
 
 RCT_EXTERN_METHOD(sendMessage:(NSString *)data broadcast:(BOOL)broadcast clientIds:(NSArray *)clientIds)
-RCT_EXTERN_METHOD(sendUserData:(NSString *)data broadcast:(BOOL)broadcast clientIds:(NSArray *)clientIds)
+RCT_EXTERN_METHOD(sendUserData:(NSDictionary *)data broadcast:(BOOL)broadcast clientIds:(NSArray *)clientIds)
 
 // To switch user role.
 RCT_EXTERN_METHOD(switchUserRole:(NSString *)clientId)
+
+RCT_EXTERN_METHOD(sendFiles:(NSString *)position isBroadcast:(BOOL)isBroadcast clientIds:(NSArray *)clientIds)
+
+RCT_EXTERN_METHOD(downloadFile:(NSDictionary *)file autoSave:(BOOL)autoSave)
+
+RCT_EXTERN_METHOD(getAvailableFiles)
+
 
 @end

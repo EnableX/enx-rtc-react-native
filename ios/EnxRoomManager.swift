@@ -353,15 +353,17 @@ class EnxRoomManager: RCTEventEmitter {
         guard let room = EnxRN.sharedState.room else {
             return
         }
-        room.sendMessage(data, broadCast: broadcast, clientIds: clientIds)
+        room.sendMessage(data, isBroadCast: broadcast, recipientIDs: clientIds)
+       // room.sendMessage(data, broadCast: broadcast, clientIds: clientIds)
     }
     
     //Send User Data
-    @objc func sendUserData(_ data: String, broadcast: Bool, clientIds: [Any]?) {
+    @objc func sendUserData(_ data: NSDictionary, broadcast: Bool, clientIds: [Any]?) {
         guard let room = EnxRN.sharedState.room else {
             return
         }
-        room.sendUserData(data, broadCast: broadcast, clientIds: clientIds)
+        room.sendUserData(data as! [AnyHashable : Any], isBroadCast: broadcast, recipientIDs: clientIds)
+        //room.sendUserData(data, broadCast: broadcast, clientIds: clientIds)
     }
     
     //TO switch user role.
@@ -372,6 +374,40 @@ class EnxRoomManager: RCTEventEmitter {
         }
         room.switchUserRole(clientId)
     }
+    @objc func sendFiles(_ position: NSString, isBroadcast: Bool, clientIds: [Any]?){
+        guard let room = EnxRN.sharedState.room else {
+            return
+        }
+       var pos = EnxFilePosition.Top
+        if(position.uppercased == "BOTTOM"){
+           pos = EnxFilePosition.Bottom
+        }
+        else if(position.uppercased == "CENTER"){
+            pos = EnxFilePosition.Center
+        }
+        DispatchQueue.main.async {
+        room.shareFiles(pos, isBroadcast: isBroadcast, clientIds: clientIds)
+        }
+    }
+    
+    @objc func downloadFile(_ file: NSDictionary, autoSave: Bool){
+        guard let room = EnxRN.sharedState.room else {
+            return
+        }
+        room.downloadFile(file as! [AnyHashable : Any], autoSave: autoSave)
+     }
+    
+    @objc func getAvailableFiles(){
+        guard let room = EnxRN.sharedState.room else {
+            return
+        }
+        let array  = room.getAvailableFiles()
+            self.emitEvent(event: "room:didAvailableFiles", data: array)
+    }
+
+    
+
+    
 
     //To enable particular player stream stats.
     @objc func enablePlayerStats(_ value: Bool, _ streamId: String){
@@ -428,7 +464,9 @@ class EnxRoomManager: RCTEventEmitter {
         guard let room = EnxRN.sharedState.room else{
             return
         }
-        room.disconnect()
+        DispatchQueue.main.async {
+           room.disconnect()
+        }
         
     }
     
@@ -476,7 +514,7 @@ extension EnxRoomManager : EnxRoomDelegate
 {
     func getSupportedEvents() -> [String] {
         
-        return ["room:didActiveTalkerList","room:didScreenSharedStarted","room:didScreenShareStopped","room:didCanvasStarted","room:didCanvasStopped","room:didRoomRecordStart","room:didRoomRecordStop","room:didFloorRequested","room:didLogUpload","room:didSetTalkerCount","room:didGetMaxTalkers","room:didGetTalkerCount","room:userDidConnected","room:userDidDisconnected","room:didHardUnMuteAllUser","room:didHardMutedAll","room:didUnMutedAllUser","room:didMutedAllUser","room:didProcessFloorRequested","room:didFloorRequestReceived","room:didReleaseFloorRequested","room:didDenyFloorRequested","room:didGrantFloorRequested","room:didStopRecordingEvent","room:didStartRecordingEvent","room:didSubscribedStream","room:didDisconnected","room:didStreamAdded","room:didEventError","room:didError","room:didPublishedStream","room:didNotifyDeviceUpdate","room:didStatsReceive","room:didAcknowledgeStats","room:didBandWidthUpdated","room:didShareStreamEvent","room:didRoomConnected","room:didReconnect","room:didUserReconnectSuccess","room:didConnectionInterrupted","room:didConnectionLost","room:didCanvasStreamEvent","room:didAdvanceOptionsUpdate","room:didGetAdvanceOptions","room:didCapturedView","room:didReceiveChatDataAtRoom","room:didAcknowledgSendData","room:didSwitchUserRole","stream:didAudioEvent","stream:didVideoEvent","stream:didhardMuteAudio","stream:didhardUnmuteAudio","stream:didRemoteStreamAudioMute","stream:didRemoteStreamAudioUnMute","stream:didRemoteStreamVideoMute","stream:didRecievedHardMutedAudio","stream:didRecievedHardUnmutedAudio","stream:didRemoteStreamVideoUnMute","stream:didHardVideoMute","stream:didHardVideoUnMute","stream:didReceivehardMuteVideo","stream:didRecivehardUnmuteVideo","stream:didReceiveData","stream:didPlayerStats"];
+        return ["room:didActiveTalkerList","room:didScreenSharedStarted","room:didScreenShareStopped","room:didCanvasStarted","room:didCanvasStopped","room:didRoomRecordStart","room:didRoomRecordStop","room:didFloorRequested","room:didLogUpload","room:didSetTalkerCount","room:didGetMaxTalkers","room:didGetTalkerCount","room:userDidConnected","room:userDidDisconnected","room:didHardUnMuteAllUser","room:didHardMutedAll","room:didUnMutedAllUser","room:didMutedAllUser","room:didProcessFloorRequested","room:didFloorRequestReceived","room:didReleaseFloorRequested","room:didDenyFloorRequested","room:didGrantFloorRequested","room:didStopRecordingEvent","room:didStartRecordingEvent","room:didSubscribedStream","room:didDisconnected","room:didStreamAdded","room:didEventError","room:didError","room:didPublishedStream","room:didNotifyDeviceUpdate","room:didStatsReceive","room:didAcknowledgeStats","room:didBandWidthUpdated","room:didShareStreamEvent","room:didRoomConnected","room:didReconnect","room:didUserReconnectSuccess","room:didConnectionInterrupted","room:didConnectionLost","room:didCanvasStreamEvent","room:didAdvanceOptionsUpdate","room:didGetAdvanceOptions","room:didCapturedView","room:didMessageReceived","room:didUserDataReceived","room:didAcknowledgSendData","room:didSwitchUserRole","room:didFileUploaded","room:didFileAvailable","room:didFileUploadStarted","room:didInitFileUpload","room:didFileUploadFailed","didFileDownloaded","room:didFileDownloadFailed","room:didAvailableFiles","stream:didAudioEvent","stream:didVideoEvent","stream:didhardMuteAudio","stream:didhardUnmuteAudio","stream:didRemoteStreamAudioMute","stream:didRemoteStreamAudioUnMute","stream:didRemoteStreamVideoMute","stream:didRecievedHardMutedAudio","stream:didRecievedHardUnmutedAudio","stream:didRemoteStreamVideoUnMute","stream:didHardVideoMute","stream:didHardVideoUnMute","stream:didReceivehardMuteVideo","stream:didRecivehardUnmuteVideo","stream:didReceiveData","stream:didPlayerStats"];
     }
     
     
@@ -856,11 +894,18 @@ extension EnxRoomManager : EnxRoomDelegate
         self.emitEvent(event: "room:didShareStreamEvent", data: Data)
     }
     
-    func room(_ room: EnxRoom, didReceiveChatDataAtRoom data: [Any]?) {
+    func room(_ room: EnxRoom, didMessageReceived data: [Any]?) {
         guard let Data = data?[0] as? [String : Any] else {
             return
         }
-        self.emitEvent(event: "room:didReceiveChatDataAtRoom", data: Data)
+        self.emitEvent(event: "room:didMessageReceived", data: Data)
+    }
+    
+    func room(_ room: EnxRoom, didUserDataReceived data: [Any]?) {
+        guard let Data = data?[0] as? [String : Any] else {
+            return
+        }
+        self.emitEvent(event: "room:didUserDataReceived", data: Data)
     }
     
     func room(_ room: EnxRoom?, didAcknowledgSendData data: [Any]?) {
@@ -896,6 +941,77 @@ extension EnxRoomManager : EnxRoomDelegate
         }
         self.emitEvent(event: "room:didUserRoleChanged", data: Data)
     }
+    
+    /*
+     This delegate method called When any of the user in same room will start sharing file.
+     */
+    func room(_ room: EnxRoom, didFileUploadStarted data: [Any]?) {
+        guard let Data = data?[0] as? [String : Any] else {
+            return
+        }
+        self.emitEvent(event: "room:didFileUploadStarted", data: Data)
+    }
+    
+    /*
+     This delegate method called When self user will start sharing file.
+     */
+    func room(_ room: EnxRoom, didInitFileUpload data: [Any]?) {
+        guard let Data = data?[0] as? [String : Any] else {
+            return
+        }
+        self.emitEvent(event: "room:didInitFileUpload", data: Data)
+    }
+    
+    /*
+     This delegate method called When File available to download.
+     */
+    func room(_ room: EnxRoom, didFileAvailable data: [Any]?) {
+        guard let Data = data?[0] as? [String : Any] else {
+            return
+        }
+        self.emitEvent(event: "room:didFileAvailable", data: Data)
+    }
+    
+    /*
+     This delegate method called upload file is success.
+     */
+    func room(_ room: EnxRoom, didFileUploaded data: [Any]?) {
+        guard let Data = data?[0] as? [String : Any] else {
+            return
+        }
+        self.emitEvent(event: "room:didFileUploaded", data: Data)
+    }
+   
+    /*
+     This delegate method called upload file is failed.
+     */
+    func room(_ room: EnxRoom, didFileUploadFailed data: [Any]?) {
+        guard let Data = data?[0] as? [String : Any] else {
+            return
+        }
+        self.emitEvent(event: "room:didFileUploadFailed", data: Data)
+    }
+    
+    /*
+     This delegate method called When download of file success.
+     */
+    func room(_ room: EnxRoom, didFileDownloaded data: String?) {
+//        guard let data == nil else {
+//            return
+//        }
+        self.emitEvent(event: "room:didFileDownloaded", data: data!)
+    }
+    
+    /*
+     This delegate method called When file download failed.
+     */
+    func room(_ room: EnxRoom, didFileDownloadFailed data: [Any]?) {
+        guard let Data = data?[0] as? [String : Any] else {
+            return
+        }
+        self.emitEvent(event: "room:didFileDownloadFailed", data: Data)
+    }
+    
 }
 
 extension EnxRoomManager :  EnxStreamDelegate
@@ -1026,8 +1142,10 @@ extension EnxRoomManager : EnxPlayerDelegate
     }
     
     func didCapturedView(_ snapShot: UIImage) {
-       // let imageData:NSData = snapShot.pngData()! as NSData
-//        let base64String = imageData.base64EncodedString(options: NSData.Base64EncodingOptions(rawValue: 0))
-//        self.emitEvent(event: "room:didCapturedView", data: base64String)
+        guard let imageData = UIImagePNGRepresentation(snapShot) else {
+            return;
+        }
+        let base64String = imageData.base64EncodedString(options: NSData.Base64EncodingOptions(rawValue: 0))
+        self.emitEvent(event: "room:didCapturedView", data: base64String)
     }
 }

@@ -42,6 +42,7 @@ end
 4. In case if you want Autolinking then don't do step 3. Add following in podfile:
       ...
       pod 'enx-rtc-react-native', :path => '../node_modules/enx-rtc-react-native/ios/RNEnxRtc.podspec'
+      Note:- Kindly make sure "Bitcode" = No in your project.
       ...
       
 5. Now run, `pod install`

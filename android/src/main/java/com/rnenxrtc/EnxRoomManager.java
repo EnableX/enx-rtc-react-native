@@ -1,11 +1,13 @@
 package com.rnenxrtc;
 
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.FrameLayout;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
@@ -33,6 +35,8 @@ import enx_rtc_android.Controller.EnxAdvancedOptionsObserver;
 import enx_rtc_android.Controller.EnxBandwidthObserver;
 import enx_rtc_android.Controller.EnxCanvasObserver;
 import enx_rtc_android.Controller.EnxChairControlObserver;
+import enx_rtc_android.Controller.EnxFileShare;
+import enx_rtc_android.Controller.EnxFileShareObserver;
 import enx_rtc_android.Controller.EnxLogsObserver;
 import enx_rtc_android.Controller.EnxLogsUtil;
 import enx_rtc_android.Controller.EnxMuteAudioStreamObserver;
@@ -53,7 +57,7 @@ import enx_rtc_android.Controller.EnxStream;
 import enx_rtc_android.Controller.EnxStreamObserver;
 import enx_rtc_android.Controller.EnxTalkerObserver;
 
-public class EnxRoomManager extends ReactContextBaseJavaModule implements EnxRoomObserver, EnxStreamObserver, EnxRecordingObserver, EnxScreenShareObserver, EnxTalkerObserver, EnxLogsObserver, EnxChairControlObserver, EnxMuteRoomObserver, EnxMuteAudioStreamObserver, EnxMuteVideoStreamObserver, EnxStatsObserver, EnxPlayerStatsObserver, EnxBandwidthObserver, EnxNetworkObserever, EnxReconnectObserver, EnxScreenShotObserver, EnxAdvancedOptionsObserver, EnxCanvasObserver {
+public class EnxRoomManager extends ReactContextBaseJavaModule implements EnxRoomObserver, EnxStreamObserver, EnxRecordingObserver, EnxScreenShareObserver, EnxTalkerObserver, EnxLogsObserver, EnxChairControlObserver, EnxMuteRoomObserver, EnxMuteAudioStreamObserver, EnxMuteVideoStreamObserver, EnxStatsObserver, EnxPlayerStatsObserver, EnxBandwidthObserver, EnxNetworkObserever, EnxReconnectObserver, EnxScreenShotObserver, EnxAdvancedOptionsObserver, EnxCanvasObserver, EnxFileShareObserver {
     private ReactApplicationContext mReactContext = null;
     private ArrayList<String> jsEvents = new ArrayList<String>();
     private ArrayList<String> componentEvents = new ArrayList<String>();
@@ -454,9 +458,63 @@ public class EnxRoomManager extends ReactContextBaseJavaModule implements EnxRoo
     }
 
     @ReactMethod
-    public void sendUserData(String message, boolean broadcast, ReadableArray clientList) {
+    public void sendUserData(ReadableMap message, boolean broadcast, ReadableArray clientList) throws JSONException {
         if (mEnxRoom != null) {
-            mEnxRoom.sendUserData(message, broadcast, Arguments.toList(clientList));
+            mEnxRoom.sendUserData(EnxUtils.convertMapToJson(message), broadcast, Arguments.toList(clientList));
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @ReactMethod
+    public void sendFiles(final String position, final boolean broadcast, final ReadableArray clientList) {
+        try {
+            mReactContext.getCurrentActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (mEnxRoom != null) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                if (position.equalsIgnoreCase("top")) {
+                                    mEnxRoom.sendFiles(EnxFileShare.Position.TOP, broadcast, Arguments.toList(clientList));
+                                } else if (position.equalsIgnoreCase("center")) {
+                                    mEnxRoom.sendFiles(EnxFileShare.Position.CENTER, broadcast, Arguments.toList(clientList));
+                                } else if (position.equalsIgnoreCase("bottom")) {
+                                    mEnxRoom.sendFiles(EnxFileShare.Position.BOTTOM, broadcast, Arguments.toList(clientList));
+                                } else {
+                                    mEnxRoom.sendFiles(EnxFileShare.Position.TOP, broadcast, Arguments.toList(clientList));
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @ReactMethod
+    public void downloadFile(ReadableMap data, boolean isAutoSave) throws JSONException {
+        if (mEnxRoom != null) {
+            mEnxRoom.downloadFile(EnxUtils.convertMapToJson(data), isAutoSave);
+        }
+    }
+
+    @ReactMethod
+    public void getAvailableFiles() throws JSONException {
+        if (mEnxRoom != null) {
+            JSONObject object=mEnxRoom.getAvailableFiles();
+            if (object.optJSONArray("files").length()==0) {
+                sendEventWithString(this.getReactApplicationContext(), roomPreface + "getAvailableFiles", "No files Available");
+            } else {
+                try {
+                    sendEventMap(this.getReactApplicationContext(), roomPreface + "getAvailableFiles", EnxUtils.jsonToReact(mEnxRoom.getAvailableFiles()));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -544,6 +602,7 @@ public class EnxRoomManager extends ReactContextBaseJavaModule implements EnxRoo
         mEnxRoom.setNetworkChangeObserver(this);
         mEnxRoom.setReconnectObserver(this);
         mEnxRoom.setCanvasObserver(this);
+        mEnxRoom.setFileShareObserver(this);
     }
 
     @Override
@@ -568,9 +627,11 @@ public class EnxRoomManager extends ReactContextBaseJavaModule implements EnxRoo
         if (enxRtc != null) {
             enxRtc = null;
         }
-
-        WritableMap streamInfo = EnxUtils.prepareJSUserMap(jsonObject);
-        sendEventMap(this.getReactApplicationContext(), roomPreface + "onRoomError", streamInfo);
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onRoomError", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         sharedState = null;
     }
 
@@ -663,7 +724,11 @@ public class EnxRoomManager extends ReactContextBaseJavaModule implements EnxRoo
 
     @Override
     public void onEventInfo(JSONObject jsonObject) {
-
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onEventInfo", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -675,6 +740,24 @@ public class EnxRoomManager extends ReactContextBaseJavaModule implements EnxRoo
     public void onAcknowledgedSendData(JSONObject jsonObject) {
         try {
             sendEventMap(this.getReactApplicationContext(), roomPreface + "onAcknowledgedSendData", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onMessageReceived(JSONObject jsonObject) {
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onMessageReceived", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onUserDataReceived(JSONObject jsonObject) {
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onUserDataReceived", EnxUtils.jsonToReact(jsonObject));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -698,15 +781,6 @@ public class EnxRoomManager extends ReactContextBaseJavaModule implements EnxRoo
         }
         WritableMap streamInfo = EnxUtils.prepareJSShareStreamMap(jsonObject);
         sendEventMap(this.getReactApplicationContext(), roomPreface + "onCanvasStopped", streamInfo);
-    }
-
-    @Override
-    public void onReceivedChatDataAtRoom(JSONObject jsonObject) {
-        try {
-            sendEventMap(this.getReactApplicationContext(), roomPreface + "onReceivedChatDataAtRoom", EnxUtils.jsonToReact(jsonObject));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -1084,6 +1158,72 @@ public class EnxRoomManager extends ReactContextBaseJavaModule implements EnxRoo
         }
     }
 
+    @Override
+    public void onFileUploadStarted(JSONObject jsonObject) {
+        Log.e("onFileUploadStarted", jsonObject.toString());
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onFileUploadStarted", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onInitFileUpload(JSONObject jsonObject) {
+        Log.e("OnInitFileUpload", jsonObject.toString());
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onInitFileUpload", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onFileAvailable(JSONObject jsonObject) {
+        Log.e("onFileAvailable", jsonObject.toString());
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onFileAvailable", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onFileUploaded(JSONObject jsonObject) {
+        Log.e("onFileUploaded", jsonObject.toString());
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onFileUploaded", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onFileUploadFailed(JSONObject jsonObject) {
+        Log.e("onFileUploadFailed", jsonObject.toString());
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onFileUploadFailed", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onFileDownloaded(String s) {
+        Log.e("onFileDownloaded", s);
+        sendEventWithString(this.getReactApplicationContext(), roomPreface + "onFileDownloaded", String.valueOf(s));
+    }
+
+    @Override
+    public void onFileDownloadFailed(JSONObject jsonObject) {
+        Log.e("onFileDownloadFailed", jsonObject.toString());
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onFileDownloadFailed", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     private JSONObject getLocalStreamJsonObject(ReadableMap localStreamInfo) {
         JSONObject jsonObject = new JSONObject();
         try {
@@ -1120,7 +1260,7 @@ public class EnxRoomManager extends ReactContextBaseJavaModule implements EnxRoo
     }
 
     private JSONObject getAdvancedOptionsObject(JSONArray advanceOptions) {
-        Log.e("getAdvancedOptions",advanceOptions.toString());
+        Log.e("getAdvancedOptions", advanceOptions.toString());
 //        [{"battery_updates":false},{"notify_video_resolution_change":false}]
         JSONObject jsonObject = new JSONObject();
         try {

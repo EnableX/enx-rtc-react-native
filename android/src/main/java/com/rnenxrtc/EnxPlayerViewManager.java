@@ -28,5 +28,10 @@ public class EnxPlayerViewManager extends ViewGroupManager<EnxPlayerLayout> {
         Log.e("setStreamId", streamId);
         view.createPublisherView(streamId);
     }
+
+    @ReactProp(name = "isLocal")
+    public void isLocal(EnxPlayerLayout view, String isLocal) {
+        Log.e("setStreamId", isLocal);
+    }
 }
 

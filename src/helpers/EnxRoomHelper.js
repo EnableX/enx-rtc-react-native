@@ -95,12 +95,21 @@ const sanitizeRoomEvents = events => {
           "didAdvanceOptionsUpdate" /* Event will notify advance options update. */,
         getAdvancedOptions: "didGetAdvanceOptions",
         capturedView:
-          "didCapturedView" /* Event will provide base64 string of captured screen shot image. */,
-        receiveChatDataAtRoom:
-          "didReceiveChatDataAtRoom" /* Event will notify to reveive chat at room level. */,
+          "didCapturedView", /* Event will provide base64 string of captured screen shot image. */
+        userDataReceived:
+          "didUserDataReceived", /* Event called to receive custom signaling event message at room Level. */
+        messageReceived: "didMessageReceived", // Event called to receive message at room Level.
         acknowledgeSendData: "didAcknowledgSendData", // Event called on acknowledge send Data.
         acknowledgeSwitchUserRole: "didSwitchUserRole", // Event called on acknowledge switch user role.
-        userRoleChanged: "didUserRoleChanged" // Event called on user role change.
+        userRoleChanged: "didUserRoleChanged", // Event called on user role change.
+        fileUploaded: "didFileUploaded",// Event called file is upload successfull.
+        fileAvailable: "didFileAvailable",// Event called When File available to download.
+        fileUploadStarted: "didFileUploadStarted",// Event called When any of the user in same room will start sharing file.
+        fileUploadFailed: "didFileUploadFailed",// Event called upload file is failed.
+        initFileUpload: "didInitFileUpload",// Event called When self user will start sharing file.
+        fileDownloaded: "didFileDownloaded",// Event called When download of file success.
+        fileDownloadFailed: "didFileDownloadFailed", // Event called When file download failed.
+        availableFiles: "didAvailableFiles"
       },
       android: {
         roomConnected: "onRoomConnected",
@@ -148,10 +157,19 @@ const sanitizeRoomEvents = events => {
         capturedView: "OnCapturedView",
         getAdvancedOptions: "onGetAdvancedOptions",
         advancedOptionsUpdate: "onAdvancedOptionsUpdate",
-        receiveChatDataAtRoom: "onReceivedChatDataAtRoom",
+        userDataReceived :"onUserDataReceived",
+        messageReceived: "onMessageReceived",
         acknowledgeSendData: "onAcknowledgedSendData",
         acknowledgeSwitchUserRole: "onSwitchedUserRole",
-        userRoleChanged : "onUserRoleChanged"
+        userRoleChanged : "onUserRoleChanged",
+        fileUploadStarted:"onFileUploadStarted",
+        initFileUpload:"onInitFileUpload",
+        fileAvailable:"onFileAvailable",
+        fileUploaded:"onFileUploaded",
+        fileUploadFailed:"onFileUploadFailed",
+        fileDownloaded:"onFileDownloaded",
+        fileDownloadFailed:"onFileDownloadFailed",
+         availableFiles: "getAvailableFiles"
       }
     };
     return reassignEvents("room", customEvents, events);
