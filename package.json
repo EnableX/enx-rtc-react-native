@@ -1,6 +1,6 @@
 {
     "name": "enx-rtc-react-native",
-    "version": "1.5.3.1",
+    "version": "1.5.3-beta",
     "description": "It is a react native component for Enablex users.",
     "main": "src/index.js",
     "scripts": {
