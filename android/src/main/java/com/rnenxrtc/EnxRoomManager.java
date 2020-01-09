@@ -637,14 +637,20 @@ public class EnxRoomManager extends ReactContextBaseJavaModule implements EnxRoo
 
     @Override
     public void onUserConnected(JSONObject jsonObject) {
-        WritableMap streamInfo = EnxUtils.prepareJSUserMap(jsonObject);
-        sendEventMap(this.getReactApplicationContext(), roomPreface + "onUserConnected", streamInfo);
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onUserConnected", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onUserDisConnected(JSONObject jsonObject) {
-        WritableMap streamInfo = EnxUtils.prepareJSUserMap(jsonObject);
-        sendEventMap(this.getReactApplicationContext(), roomPreface + "onUserDisConnected", streamInfo);
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onUserDisConnected", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -699,8 +705,11 @@ public class EnxRoomManager extends ReactContextBaseJavaModule implements EnxRoo
         if (enxRtc != null) {
             enxRtc = null;
         }
-        WritableMap streamInfo = EnxUtils.prepareJSResultMap(jsonObject);
-        sendEventMap(this.getReactApplicationContext(), roomPreface + "onRoomDisConnected", streamInfo);
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onRoomDisConnected", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         sharedState = null;
     }
 
@@ -765,8 +774,11 @@ public class EnxRoomManager extends ReactContextBaseJavaModule implements EnxRoo
 
     @Override
     public void onCanvasStarted(JSONObject jsonObject) {
-        WritableMap streamInfo = EnxUtils.prepareJSShareStreamMap(jsonObject);
-        sendEventMap(this.getReactApplicationContext(), roomPreface + "onCanvasStarted", streamInfo);
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onCanvasStarted", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -779,8 +791,11 @@ public class EnxRoomManager extends ReactContextBaseJavaModule implements EnxRoo
         if (mLocalStreamViewContainers.containsKey(jsonObject.optString("streamId"))) {
             mLocalStreamViewContainers.remove(jsonObject.optString("streamId"));
         }
-        WritableMap streamInfo = EnxUtils.prepareJSShareStreamMap(jsonObject);
-        sendEventMap(this.getReactApplicationContext(), roomPreface + "onCanvasStopped", streamInfo);
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onCanvasStopped", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -866,32 +881,47 @@ public class EnxRoomManager extends ReactContextBaseJavaModule implements EnxRoo
 
     @Override
     public void onStartRecordingEvent(JSONObject jsonObject) {
-        WritableMap streamInfo = EnxUtils.prepareJSResultMap(jsonObject);
-        sendEventMap(this.getReactApplicationContext(), roomPreface + "onStartRecordingEvent", streamInfo);
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onStartRecordingEvent", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onRoomRecordingOn(JSONObject jsonObject) {
-        WritableMap streamInfo = EnxUtils.prepareJSResultMap(jsonObject);
-        sendEventMap(this.getReactApplicationContext(), roomPreface + "onRoomRecordingOn", streamInfo);
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onRoomRecordingOn", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onStopRecordingEvent(JSONObject jsonObject) {
-        WritableMap streamInfo = EnxUtils.prepareJSResultMap(jsonObject);
-        sendEventMap(this.getReactApplicationContext(), roomPreface + "onStopRecordingEvent", streamInfo);
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onStopRecordingEvent", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onRoomRecordingOff(JSONObject jsonObject) {
-        WritableMap streamInfo = EnxUtils.prepareJSResultMap(jsonObject);
-        sendEventMap(this.getReactApplicationContext(), roomPreface + "onRoomRecordingOff", streamInfo);
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onRoomRecordingOff", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onScreenSharedStarted(JSONObject jsonObject) {
-        WritableMap streamInfo = EnxUtils.prepareJSShareStreamMap(jsonObject);
-        sendEventMap(this.getReactApplicationContext(), roomPreface + "onScreenSharedStarted", streamInfo);
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onScreenSharedStarted", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -904,122 +934,182 @@ public class EnxRoomManager extends ReactContextBaseJavaModule implements EnxRoo
         if (mLocalStreamViewContainers.containsKey(jsonObject.optString("streamId"))) {
             mLocalStreamViewContainers.remove(jsonObject.optString("streamId"));
         }
-        WritableMap streamInfo = EnxUtils.prepareJSShareStreamMap(jsonObject);
-        sendEventMap(this.getReactApplicationContext(), roomPreface + "onScreenSharedStopped", streamInfo);
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onScreenSharedStopped", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onSetTalkerCount(JSONObject jsonObject) {
-        WritableMap streamInfo = EnxUtils.prepareJSTalkerMap(jsonObject);
-        sendEventMap(this.getReactApplicationContext(), roomPreface + "onSetTalkerCount", streamInfo);
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onSetTalkerCount", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onGetTalkerCount(JSONObject jsonObject) {
-        WritableMap streamInfo = EnxUtils.prepareJSTalkerMap(jsonObject);
-        sendEventMap(this.getReactApplicationContext(), roomPreface + "onGetTalkerCount", streamInfo);
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onGetTalkerCount", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onMaxTalkerCount(JSONObject jsonObject) {
-        WritableMap streamInfo = EnxUtils.prepareJSTalkerMap(jsonObject);
-        sendEventMap(this.getReactApplicationContext(), roomPreface + "onMaxTalkerCount", streamInfo);
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onMaxTalkerCount", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onLogUploaded(JSONObject jsonObject) {
-        WritableMap streamInfo = EnxUtils.prepareJSResultMap(jsonObject);
-        sendEventMap(this.getReactApplicationContext(), roomPreface + "onLogUploaded", streamInfo);
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onLogUploaded", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onFloorRequested(JSONObject jsonObject) {
-        WritableMap streamInfo = EnxUtils.prepareJSResultMap(jsonObject);
-        sendEventMap(this.getReactApplicationContext(), roomPreface + "onFloorRequested", streamInfo);
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onFloorRequested", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onFloorRequestReceived(JSONObject jsonObject) {
-        WritableMap streamInfo = EnxUtils.prepareJSResultMap(jsonObject);
-        sendEventMap(this.getReactApplicationContext(), roomPreface + "onFloorRequestReceived", streamInfo);
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onFloorRequestReceived", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onProcessFloorRequested(JSONObject jsonObject) {
-        WritableMap streamInfo = EnxUtils.prepareJSResultMap(jsonObject);
-        sendEventMap(this.getReactApplicationContext(), roomPreface + "onProcessFloorRequested", streamInfo);
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onProcessFloorRequested", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onGrantedFloorRequest(JSONObject jsonObject) {
-        WritableMap streamInfo = EnxUtils.prepareJSCCResultMap(jsonObject);
-        sendEventMap(this.getReactApplicationContext(), roomPreface + "onGrantedFloorRequest", streamInfo);
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onGrantedFloorRequest", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onDeniedFloorRequest(JSONObject jsonObject) {
-        WritableMap streamInfo = EnxUtils.prepareJSCCResultMap(jsonObject);
-        sendEventMap(this.getReactApplicationContext(), roomPreface + "onDeniedFloorRequest", streamInfo);
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onDeniedFloorRequest", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onReleasedFloorRequest(JSONObject jsonObject) {
-        WritableMap streamInfo = EnxUtils.prepareJSCCResultMap(jsonObject);
-        sendEventMap(this.getReactApplicationContext(), roomPreface + "onReleasedFloorRequest", streamInfo);
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onReleasedFloorRequest", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onHardMutedAudio(JSONObject jsonObject) {
-        WritableMap streamInfo = EnxUtils.prepareJSCCResultMap(jsonObject);
-        sendEventMap(this.getReactApplicationContext(), streamPreface + "onHardMutedAudio", streamInfo);
+        try {
+            sendEventMap(this.getReactApplicationContext(), streamPreface + "onHardMutedAudio", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onHardUnMutedAudio(JSONObject jsonObject) {
-        WritableMap streamInfo = EnxUtils.prepareJSCCResultMap(jsonObject);
-        sendEventMap(this.getReactApplicationContext(), streamPreface + "onHardUnMutedAudio", streamInfo);
+        try {
+            sendEventMap(this.getReactApplicationContext(), streamPreface + "onHardUnMutedAudio", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onReceivedHardMuteAudio(JSONObject jsonObject) {
-        WritableMap streamInfo = EnxUtils.prepareJSCCResultMap(jsonObject);
-        sendEventMap(this.getReactApplicationContext(), streamPreface + "onReceivedHardMuteAudio", streamInfo);
+        try {
+            sendEventMap(this.getReactApplicationContext(), streamPreface + "onReceivedHardMuteAudio", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onReceivedHardUnMuteAudio(JSONObject jsonObject) {
-        WritableMap streamInfo = EnxUtils.prepareJSCCResultMap(jsonObject);
-        sendEventMap(this.getReactApplicationContext(), streamPreface + "onReceivedHardUnMuteAudio", streamInfo);
+        try {
+            sendEventMap(this.getReactApplicationContext(), streamPreface + "onReceivedHardUnMuteAudio", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onHardMutedVideo(JSONObject jsonObject) {
-        WritableMap streamInfo = EnxUtils.prepareJSCCResultMap(jsonObject);
-        sendEventMap(this.getReactApplicationContext(), streamPreface + "onHardMutedVideo", streamInfo);
+        try {
+            sendEventMap(this.getReactApplicationContext(), streamPreface + "onHardMutedVideo", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onHardUnMutedVideo(JSONObject jsonObject) {
-        WritableMap streamInfo = EnxUtils.prepareJSCCResultMap(jsonObject);
-        sendEventMap(this.getReactApplicationContext(), streamPreface + "onHardUnMutedVideo", streamInfo);
+        try {
+            sendEventMap(this.getReactApplicationContext(), streamPreface + "onHardUnMutedVideo", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onReceivedHardMuteVideo(JSONObject jsonObject) {
-        WritableMap streamInfo = EnxUtils.prepareJSCCResultMap(jsonObject);
-        sendEventMap(this.getReactApplicationContext(), streamPreface + "onReceivedHardMuteVideo", streamInfo);
+        try {
+            sendEventMap(this.getReactApplicationContext(), streamPreface + "onReceivedHardMuteVideo", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onReceivedHardUnMuteVideo(JSONObject jsonObject) {
-        WritableMap streamInfo = EnxUtils.prepareJSCCResultMap(jsonObject);
-        sendEventMap(this.getReactApplicationContext(), streamPreface + "onReceivedHardUnMuteVideo", streamInfo);
+        try {
+            sendEventMap(this.getReactApplicationContext(), streamPreface + "onReceivedHardUnMuteVideo", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onHardMuted(JSONObject jsonObject) {
-        WritableMap streamInfo = EnxUtils.prepareJSResultMap(jsonObject);
-        sendEventMap(this.getReactApplicationContext(), roomPreface + "onHardMuted", streamInfo);
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onHardMuted", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -1033,8 +1123,11 @@ public class EnxRoomManager extends ReactContextBaseJavaModule implements EnxRoo
 
     @Override
     public void onHardUnMuted(JSONObject jsonObject) {
-        WritableMap streamInfo = EnxUtils.prepareJSResultMap(jsonObject);
-        sendEventMap(this.getReactApplicationContext(), roomPreface + "onHardUnMuted", streamInfo);
+        try {
+            sendEventMap(this.getReactApplicationContext(), roomPreface + "onHardUnMuted", EnxUtils.jsonToReact(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

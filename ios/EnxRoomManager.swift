@@ -12,6 +12,7 @@ import EnxRTCiOS
 @objc(EnxRoomManager)
 class EnxRoomManager: RCTEventEmitter {
     var localStream : EnxStream!
+    var localStreamId : String!
     var objectJoin: EnxRtc!
     var remoteRoom : EnxRoom!
     var componentEvents: [String] = [];
@@ -71,6 +72,7 @@ class EnxRoomManager: RCTEventEmitter {
         guard streamId != nil else{
             return
         }
+        localStreamId = streamId
         DispatchQueue.main.async {
             if(self.localStream != nil) {
                 EnxRN.sharedState.publishStreams.updateValue(self.localStream, forKey: (streamId)!)
@@ -386,7 +388,7 @@ class EnxRoomManager: RCTEventEmitter {
             pos = EnxFilePosition.Center
         }
         DispatchQueue.main.async {
-        room.shareFiles(pos, isBroadcast: isBroadcast, clientIds: clientIds)
+        room.sendFiles(pos, isBroadcast: isBroadcast, clientIds: clientIds)
         }
     }
     
@@ -447,15 +449,18 @@ class EnxRoomManager: RCTEventEmitter {
     }
     
     @objc func captureScreenShot(_ streamId: String){
-        guard let stream = EnxRN.sharedState.publishStreams[streamId] else{
+        
+        var stream = EnxRN.sharedState.publishStreams[streamId]
+        if(stream == nil){
+            stream = EnxRN.sharedState.subscriberStreams[streamId]
+        }
+        guard stream?.enxPlayerView != nil else{
             return;
         }
-        guard stream.enxPlayerView != nil else{
-            return;
-        }
+         
          DispatchQueue.main.async {
-        stream.enxPlayerView?.delegate = self
-        stream.enxPlayerView?.captureScreenShot()
+            stream?.enxPlayerView?.delegate = self
+            stream?.enxPlayerView?.captureScreenShot()
         }
     }
     
@@ -564,10 +569,10 @@ extension EnxRoomManager : EnxRoomDelegate
     }
     
     func room(_ room: EnxRoom?, didPublishStream stream: EnxStream?) {
-        guard let localStream = stream else{
-            return
+        if(localStreamId == nil){
+            localStreamId = ""
         }
-        let resultDict : NSDictionary = ["result" : 0 ,"message" : "Stream has been published." ,"streamId" :localStream.streamId as Any]
+        let resultDict : NSDictionary = ["result" : 0 ,"message" : "Stream has been published." ,"streamId" :localStreamId]
         
         self.emitEvent(event: "room:didPublishedStream", data: resultDict)
     }

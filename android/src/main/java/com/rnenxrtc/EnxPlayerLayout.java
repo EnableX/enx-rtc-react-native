@@ -1,10 +1,12 @@
 package com.rnenxrtc;
 
+import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.uimanager.ThemedReactContext;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,6 +16,8 @@ import enx_rtc_android.Controller.EnxStream;
 
 public class EnxPlayerLayout extends FrameLayout {
 
+    Activity activity=null;
+
     EnxRN sharedState;
     ThemedReactContext mReactContext;
     String mStreamId;
@@ -21,23 +25,22 @@ public class EnxPlayerLayout extends FrameLayout {
         super(reactContext);
         sharedState = EnxRN.getSharedState();
         mReactContext = reactContext;
+        activity=((ReactContext)getContext()).getCurrentActivity();
     }
 
     public void createPublisherView(String streamId) {
         mStreamId=streamId;
-        mReactContext.getCurrentActivity().runOnUiThread(new Runnable() {
+        activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 //put playerview in hashmap
                 ConcurrentHashMap<String, EnxPlayerView> mPlayers = sharedState.getPlayerView();
-                EnxPlayerView enxPlayerView = new EnxPlayerView(getContext(), EnxPlayerView.ScalingType.SCALE_ASPECT_FIT
+                EnxPlayerView enxPlayerView = new EnxPlayerView(activity, EnxPlayerView.ScalingType.SCALE_ASPECT_FIT
                         , false);
                 mPlayers.put(mStreamId, enxPlayerView);
 
-                FrameLayout mContainer = new FrameLayout(getContext());
+                FrameLayout mContainer = new FrameLayout(activity);
                 mContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
-//                mContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT));
-//                mContainer.setFitsSystemWindows(true);
                 ConcurrentHashMap<String, FrameLayout> mLocalStreamViewContainers = sharedState.getStreamViewContainers();
                 mLocalStreamViewContainers.put(mStreamId, mContainer);
                 addView(mLocalStreamViewContainers.get(mStreamId), 0);
