@@ -46,8 +46,11 @@ class EnxRoomManager: RCTEventEmitter {
     }
     
     @objc func joinRoom(_ token: String, localInfo: NSDictionary, roomInfo: NSDictionary, advanceOptions: NSArray){
+        
+        
         DispatchQueue.main.async {
             let localStreamInfo : NSDictionary = localInfo
+            
             guard let localStreamObject =    self.objectJoin.joinRoom(token, delegate: self, publishStreamInfo: (localStreamInfo as! [AnyHashable : Any]), roomInfo: (roomInfo as! [AnyHashable : Any]), advanceOptions: advanceOptions as? [Any]) else{
                 return
             }
@@ -187,6 +190,23 @@ class EnxRoomManager: RCTEventEmitter {
         }
     }
     
+    //For Participant to finish floor
+//    @objc func finishFloor(){
+//        guard let room = EnxRN.sharedState.room else{
+//            return
+//        }
+//        room.finishFloor()
+//    }
+    
+    //For Participant to cancel floor
+//    @objc func cancelFloor(){
+//      guard let room = EnxRN.sharedState.room else{
+//            return
+//      }
+//      room.cancelFloor()
+//    }
+//    
+    
     //Hard Mute
     
     @objc func hardMuteAudio(_ streamId: String?, _ clientId: String){
@@ -254,7 +274,7 @@ class EnxRoomManager: RCTEventEmitter {
     @objc func enableLogs(_ value: Bool)
     {
         if(value){
-            let enxLog = EnxLogger.sharedInstance()
+            let enxLog = EnxUtilityManager.shareInstance()
             enxLog?.startLog()
         }
         else{
@@ -380,15 +400,8 @@ class EnxRoomManager: RCTEventEmitter {
         guard let room = EnxRN.sharedState.room else {
             return
         }
-       var pos = EnxFilePosition.Top
-        if(position.uppercased == "BOTTOM"){
-           pos = EnxFilePosition.Bottom
-        }
-        else if(position.uppercased == "CENTER"){
-            pos = EnxFilePosition.Center
-        }
         DispatchQueue.main.async {
-        room.sendFiles(pos, isBroadcast: isBroadcast, clientIds: clientIds)
+            room.sendFiles(isBroadcast, clientIds: clientIds)
         }
     }
     
@@ -407,10 +420,343 @@ class EnxRoomManager: RCTEventEmitter {
             self.emitEvent(event: "room:didAvailableFiles", data: array)
     }
 
+    @objc func cancelUpload(_ jobId: NSString!){
+           guard let room = EnxRN.sharedState.room else {
+               return
+           }
+        
+          room.cancelUpload(jobId.intValue)
+        
+    }
     
+    @objc func cancelDownload(_ jobId: NSString!){
+          guard let room = EnxRN.sharedState.room else {
+               return
+           }
+        room.cancelDownload(jobId.intValue)
+    }
+    
+    @objc func cancelAllUploads(){
+           guard let room = EnxRN.sharedState.room else {
+               return
+           }
+        room.cancelAllUploads()
+    }
+    
+    @objc func cancelAllDownloads(){
+           guard let room = EnxRN.sharedState.room else {
+               return
+           }
+        room.cancelAllDownloads()
+    }
+   
+    //To get self connected user details
+    @objc func whoAmI(){
+       guard let room = EnxRN.sharedState.room else {
+           return
+        }
+        guard let resDict = room.whoami() as? [String : Any] else{
+          return
+        }
+       self.emitEvent(event: "room:whoAmI", data:resDict)
+    }
+   
+    //To lock room
+    @objc func lockRoom(){
+        guard let room = EnxRN.sharedState.room else {
+          return
+        }
+        room.lock()
+    }
+    
+    //To unlock Room
+    @objc func unlockRoom(){
+        guard let room = EnxRN.sharedState.room else {
+         return
+        }
+        room.unlock()
+    }
+    
+    //To destroy Room
+    @objc func destroy(){
+        guard let room = EnxRN.sharedState.room else {
+         return
+        }
+        room.destroy()
+    }
+    
+    //To start out bound call
+    @objc func makeOutboundCall(_ number: NSString){
+        guard let room = EnxRN.sharedState.room else {
+         return
+        }
+        room.makeOutboundCall(number as String)
+    }
 
     
+    @objc func dropUser(_ clientIds: NSArray){
+       guard let room = EnxRN.sharedState.room else {
+         return
+       }
+        room.dropUser(clientIds as! [Any])
+    }
+    
+     // To enableProximitySensor
+    @objc func enableProximitySensor(_ value: Bool){
+        guard let room = EnxRN.sharedState.room else {
+          return
+        }
+         room.enableProximitySensor(value)
+    }
+    
+    //To setAudioOnlyMode
+    @objc func setAudioOnlyMode(_ audioOnly: Bool){
+       guard let room = EnxRN.sharedState.room else {
+          return
+        }
+         room.setAudioOnlyMode(audioOnly)
+    }
+    
+    //To setReceiveVideoQuality
+    @objc func setReceiveVideoQuality(_ opt: NSDictionary){
+      guard let room = EnxRN.sharedState.room else {
+        return
+      }
+        room.setReceiveVideoQuality(opt as! [String : Any])
+    }
+   
+    //To getReceiveVideoQuality
+    @objc func getReceiveVideoQuality(_ streamType: NSString){
+      guard let room = EnxRN.sharedState.room else {
+         return
+      }
+        let type = room.getReceiveVideoQuality(streamType as String)
+        self.emitEvent(event: "room:getReceiveVideoQuality", data:type)
+    }
+    
+    @objc func startAnnotation(_ streamId: NSString){
+       guard let room = EnxRN.sharedState.room else {
+          return
+        }
+        var stream = EnxRN.sharedState.publishStreams[streamId as String]
+        if(stream == nil){
+            stream = EnxRN.sharedState.subscriberStreams[streamId as String]
+        }
+        guard stream?.enxPlayerView != nil else{
+            return;
+        }
+        
+        room.startAnnotation(stream!)
+    }
+    
+    @objc func stopAnnotation(){
+       guard let room = EnxRN.sharedState.room else {
+          return
+       }
+        room.stopAnnotation()
+    }
+    
+    @objc func muteSubscribeStreamsAudio(_ flag: Bool){
+        guard let room = EnxRN.sharedState.room else {
+          return
+        }
+        room.muteSubscribeStreamsAudio(flag)
+    }
+    
+    @objc func getRole(){
+       guard let room = EnxRN.sharedState.room else {
+          return
+        }
+       guard room.userRole as? String != nil else{
+            return;
+        }
+       self.emitEvent(event: "room:getRole", data:room.userRole)
 
+    }
+    
+    @objc func getClientId(){
+        guard let room = EnxRN.sharedState.room else {
+          return
+        }
+        guard room.clientId as String? != nil else{
+            return;
+        }
+        self.emitEvent(event: "room:getClientId", data:room.clientId as Any)
+
+    }
+    
+    @objc func getRoomId(){
+        guard let room = EnxRN.sharedState.room else {
+         return
+        }
+        guard room.roomId as String? != nil else{
+        return;
+        }
+        self.emitEvent(event: "room:getRoomId", data:room.roomId as Any)
+    }
+    
+    @objc func getClientName(){
+        guard let room = EnxRN.sharedState.room else {
+          return
+        }
+        guard room.clientName as String? != nil else{
+         return;
+        }
+        self.emitEvent(event: "room:clientName", data:room.clientName as Any)
+    }
+    
+    @objc func isRoomActiveTalker(){
+     guard let room = EnxRN.sharedState.room else {
+        return
+     }
+      self.emitEvent(event: "room:isRoomActiveTalker", data:room.isRoomActiveTalker)
+    }
+    
+    @objc func setZoomFactor(_ value:CGFloat ,clientIds: NSArray){
+        guard let room = EnxRN.sharedState.room else {
+              return
+        }
+        room.setZoomFactor(value, clientId: clientIds as! [Any])
+    }
+    
+    
+    @objc func getUserList(){
+     guard let room = EnxRN.sharedState.room else {
+       return
+     }
+     guard let userArray = room.getUserList() as? [Any] else{
+          return
+     }
+     self.emitEvent(event: "room:getUserList", data:userArray)
+    }
+    
+    @objc func extendConferenceDuration(){
+     guard let room = EnxRN.sharedState.room else {
+      return
+     }
+     room.extendConferenceDuration()
+    }
+    
+    @objc func getRoomMetadata(){
+     guard let room = EnxRN.sharedState.room else {
+        return
+     }
+        guard let metaData = room.roomMetadata as? [String:Any] else{
+                 return
+        }
+        self.emitEvent(event: "room:getRoomMetadata", data:metaData)
+    }
+    
+    @objc func isLocal(_ streamId: String){
+        var stream = EnxRN.sharedState.publishStreams[streamId]
+        if(stream == nil){
+            stream = EnxRN.sharedState.subscriberStreams[streamId]
+        }
+        guard stream?.enxPlayerView != nil else{
+            return;
+        }
+        self.emitEvent(event: "stream:isLocal", data:stream?.isLocal as Any)
+    }
+    
+    @objc func hasAudio(_ streamId: String){
+        var stream = EnxRN.sharedState.publishStreams[streamId]
+        if(stream == nil){
+            stream = EnxRN.sharedState.subscriberStreams[streamId]
+        }
+        guard stream?.enxPlayerView != nil else{
+            return;
+        }
+        self.emitEvent(event: "stream:hasAudio", data:stream?.hasAudio() as Any)
+    }
+    
+    @objc func hasData(_ streamId: String){
+        var stream = EnxRN.sharedState.publishStreams[streamId]
+        if(stream == nil){
+            stream = EnxRN.sharedState.subscriberStreams[streamId]
+        }
+        guard stream?.enxPlayerView != nil else{
+            return;
+        }
+        self.emitEvent(event: "stream:hasData", data:stream?.hasData() as Any)
+    }
+    
+    @objc func hasVideo(_ streamId: String){
+        var stream = EnxRN.sharedState.publishStreams[streamId]
+        if(stream == nil){
+            stream = EnxRN.sharedState.subscriberStreams[streamId]
+        }
+        guard stream?.enxPlayerView != nil else{
+            return;
+        }
+        self.emitEvent(event: "stream:hasVideo", data:stream?.hasVideo() as Any)
+    }
+    
+    @objc func hasScreen(_ streamId: String){
+        var stream = EnxRN.sharedState.publishStreams[streamId]
+        if(stream == nil){
+            stream = EnxRN.sharedState.subscriberStreams[streamId]
+        }
+        guard stream?.enxPlayerView != nil else{
+            return;
+        }
+        self.emitEvent(event: "stream:hasScreen", data:stream?.screen as Any)
+    }
+    
+    @objc func isAudioOnlyStream(_ streamId: String){
+     var stream = EnxRN.sharedState.publishStreams[streamId]
+      if(stream == nil){
+        stream = EnxRN.sharedState.subscriberStreams[streamId]
+      }
+      guard stream?.enxPlayerView != nil else{
+        return;
+      }
+        self.emitEvent(event: "stream:isAudioOnlyStream", data:stream?.isAudioOnlyStream as Any)
+    }
+    
+    @objc func getReasonForMuteVideo(_ streamId: String){
+        var stream = EnxRN.sharedState.publishStreams[streamId]
+        if(stream == nil){
+          stream = EnxRN.sharedState.subscriberStreams[streamId]
+        }
+        guard stream?.enxPlayerView != nil else{
+          return;
+        }
+        guard stream?.reasonForMuteVideo != nil else{
+          return;
+        }
+        self.emitEvent(event: "stream:getReasonForMuteVideo", data:stream?.reasonForMuteVideo as Any)
+    }
+    
+    @objc func getMediaType(_ streamId: String){
+     var stream = EnxRN.sharedState.publishStreams[streamId]
+        if(stream == nil){
+          stream = EnxRN.sharedState.subscriberStreams[streamId]
+        }
+        guard stream?.enxPlayerView != nil else{
+          return;
+        }
+        guard stream?.mediaType != nil else{
+          return;
+        }
+        self.emitEvent(event: "stream:getMediaType", data:stream?.mediaType as Any)
+    }
+    
+    @objc func getVideoAspectRatio(_ streamId: String){
+        var stream = EnxRN.sharedState.publishStreams[streamId]
+        if(stream == nil){
+          stream = EnxRN.sharedState.subscriberStreams[streamId]
+        }
+        guard stream?.enxPlayerView != nil else{
+          return;
+        }
+        guard stream?.videoAspectRatio != nil else{
+          return;
+        }
+      self.emitEvent(event: "stream:getVideoAspectRatio", data:stream?.videoAspectRatio as Any)
+    }
+    
+    
+    
     //To enable particular player stream stats.
     @objc func enablePlayerStats(_ value: Bool, _ streamId: String){
         var stream = EnxRN.sharedState.publishStreams[streamId]
@@ -514,12 +860,11 @@ class EnxRoomManager: RCTEventEmitter {
     }
 }
 
-
 extension EnxRoomManager : EnxRoomDelegate
 {
     func getSupportedEvents() -> [String] {
         
-        return ["room:didActiveTalkerList","room:didScreenSharedStarted","room:didScreenShareStopped","room:didCanvasStarted","room:didCanvasStopped","room:didRoomRecordStart","room:didRoomRecordStop","room:didFloorRequested","room:didLogUpload","room:didSetTalkerCount","room:didGetMaxTalkers","room:didGetTalkerCount","room:userDidConnected","room:userDidDisconnected","room:didHardUnMuteAllUser","room:didHardMutedAll","room:didUnMutedAllUser","room:didMutedAllUser","room:didProcessFloorRequested","room:didFloorRequestReceived","room:didReleaseFloorRequested","room:didDenyFloorRequested","room:didGrantFloorRequested","room:didStopRecordingEvent","room:didStartRecordingEvent","room:didSubscribedStream","room:didDisconnected","room:didStreamAdded","room:didEventError","room:didError","room:didPublishedStream","room:didNotifyDeviceUpdate","room:didStatsReceive","room:didAcknowledgeStats","room:didBandWidthUpdated","room:didShareStreamEvent","room:didRoomConnected","room:didReconnect","room:didUserReconnectSuccess","room:didConnectionInterrupted","room:didConnectionLost","room:didCanvasStreamEvent","room:didAdvanceOptionsUpdate","room:didGetAdvanceOptions","room:didCapturedView","room:didMessageReceived","room:didUserDataReceived","room:didAcknowledgSendData","room:didSwitchUserRole","room:didFileUploaded","room:didFileAvailable","room:didFileUploadStarted","room:didInitFileUpload","room:didFileUploadFailed","didFileDownloaded","room:didFileDownloadFailed","room:didAvailableFiles","stream:didAudioEvent","stream:didVideoEvent","stream:didhardMuteAudio","stream:didhardUnmuteAudio","stream:didRemoteStreamAudioMute","stream:didRemoteStreamAudioUnMute","stream:didRemoteStreamVideoMute","stream:didRecievedHardMutedAudio","stream:didRecievedHardUnmutedAudio","stream:didRemoteStreamVideoUnMute","stream:didHardVideoMute","stream:didHardVideoUnMute","stream:didReceivehardMuteVideo","stream:didRecivehardUnmuteVideo","stream:didReceiveData","stream:didPlayerStats"];
+        return ["room:didActiveTalkerList","room:didScreenSharedStarted","room:didScreenShareStopped","room:didCanvasStarted","room:didCanvasStopped","room:didRoomRecordStart","room:didRoomRecordStop","room:didFloorRequested","room:didLogUpload","room:didSetTalkerCount","room:didGetMaxTalkers","room:didGetTalkerCount","room:userDidConnected","room:userDidDisconnected","room:didHardUnMuteAllUser","room:didHardMutedAll","room:didUnMutedAllUser","room:didMutedAllUser","room:didProcessFloorRequested","room:didFloorRequestReceived","room:didReleasedFloorRequest","room:didDeniedFloorRequest","room:didGrantedFloorRequest","room:didStopRecordingEvent","room:didStartRecordingEvent","room:didSubscribedStream","room:didDisconnected","room:didStreamAdded","room:didEventError","room:didError","room:didPublishedStream","room:didNotifyDeviceUpdate","room:didStatsReceive","room:didAcknowledgeStats","room:didBandWidthUpdated","room:didShareStreamEvent","room:didRoomConnected","room:didReconnect","room:didUserReconnectSuccess","room:didConnectionInterrupted","room:didConnectionLost","room:didCanvasStreamEvent","room:didAdvanceOptionsUpdate","room:didGetAdvanceOptions","room:didCapturedView","room:didMessageReceived","room:didUserDataReceived","room:didAcknowledgSendData","room:didSwitchUserRole","room:didFileUploaded","room:didFileAvailable","room:didFileUploadStarted","room:didInitFileUpload","room:didFileUploadFailed","didFileDownloaded","room:didFileDownloadFailed","room:didAvailableFiles","room:didFileUploadCancelled","room:didInitFileDownload","room:didFileDownloadCancelled","room:whoAmI","room:didLockRoom","room:didUnlockRoom","room:didAckLockRoom","room:didAckUnlockRoom","room:didOutBoundCallInitiated","room:didDialStateEvents","room:didAckDropUser","room:didAckDestroy","room:getReceiveVideoQuality","room:didAnnotationStarted","room:didStartAnnotationACK","room:didAnnotationStopped","room:didStoppedAnnotationACK","room:getRole","room:getClientId","room:getRoomId","room:clientName","room:getUserList","room:didConferencessExtended","room:didConferenceRemainingDuration","room:getRoomMetadata","stream:didAudioEvent","stream:didVideoEvent","stream:didhardMuteAudio","stream:didhardUnmuteAudio","stream:didRemoteStreamAudioMute","stream:didRemoteStreamAudioUnMute","stream:didRemoteStreamVideoMute","stream:didRecievedHardMutedAudio","stream:didRecievedHardUnmutedAudio","stream:didRemoteStreamVideoUnMute","stream:didHardVideoMute","stream:didHardVideoUnMute","stream:didReceivehardMuteVideo","stream:didRecivehardUnmuteVideo","stream:didReceiveData","stream:didPlayerStats","stream:isLocal","stream:hasScreen","stream:hasAudio","stream:hasVideo","stream:hasData","stream:isAudioOnlyStream","stream:getMediaType","stream:getVideoAspectRatio"];
     }
     
     
@@ -733,26 +1078,28 @@ extension EnxRoomManager : EnxRoomDelegate
     }
     
     /* Participant receives when the moderator performs action grantFloor. */
-    func didGrantFloorRequested(_ Data: [Any]?) {
-        guard let dataDict = Data?[0] as? [String : Any], Data!.count>0 else {
+    func didGrantedFloorRequest(_ Data: [Any]?) {
+      guard let dataDict = Data?[0] as? [String : Any], Data!.count>0 else {
             return
         }
-        self.emitEvent(event: "room:didGrantFloorRequested", data: dataDict)
+        self.emitEvent(event: "room:didGrantedFloorRequest", data: dataDict)
     }
+   
     /* Participant receives when the moderator performs action denyFloor. */
-    func didDenyFloorRequested(_ Data: [Any]?) {
-        guard let dataDict = Data?[0] as? [String : Any], Data!.count>0 else {
+    func didDeniedFloorRequest(_ Data: [Any]?) {
+       guard let dataDict = Data?[0] as? [String : Any], Data!.count>0 else {
             return
         }
-        self.emitEvent(event: "room:didDenyFloorRequested", data: dataDict)
+        self.emitEvent(event: "room:didDeniedFloorRequest", data: dataDict)
     }
     
+    
     /* Participant receives when the moderator performs action releaseFloor. */
-    func didReleaseFloorRequested(_ Data: [Any]?) {
-        guard let dataDict = Data?[0] as? [String : Any], Data!.count>0 else {
+    func didReleasedFloorRequest(_ Data: [Any]?) {
+      guard let dataDict = Data?[0] as? [String : Any], Data!.count>0 else {
             return
         }
-        self.emitEvent(event: "room:didReleaseFloorRequested", data: dataDict)
+        self.emitEvent(event: "room:didReleasedFloorRequest", data: dataDict)
     }
     
     /* Moderator receives any Floor Request raised by the participant. This is for Moderator only. */
@@ -763,7 +1110,6 @@ extension EnxRoomManager : EnxRoomDelegate
         self.emitEvent(event: "room:didFloorRequestReceived", data: dataDict)
     }
     
-    
     /* Moderator receives acknowledgment on performing actions like grantFloor, denyFloor, releaseFloor. */
     func didProcessFloorRequested(_ Data: [Any]?) {
         guard let dataDict = Data?[0] as? [String : Any], Data!.count>0 else {
@@ -772,6 +1118,44 @@ extension EnxRoomManager : EnxRoomDelegate
         self.emitEvent(event: "room:didProcessFloorRequested", data: dataDict)
     }
     
+    /*
+       This delegate method will notify to all available moderator, Once any participant has finished there floor request
+    */
+//    func didFinishedFloorRequest(_ Data: [Any]?) {
+//      guard let dataDict = Data?[0] as? [String : Any], Data!.count>0 else {
+//            return
+//        }
+//        self.emitEvent(event: "room:didFinishedFloorRequest", data: dataDict)
+//    }
+    
+    /*
+    This ACK method for Participant , When he/she will finished their request floor after request floor accepted by any moderator */
+//    func didFloorFinished(_ Data: [Any]?) {
+//      guard let dataDict = Data?[0] as? [String : Any], Data!.count>0 else {
+//            return
+//        }
+//        self.emitEvent(event: "room:didFloorFinished", data: dataDict)
+//    }
+    
+    /*
+       This delegate method will notify to all available moderator, Once any participant has canceled there floor request
+    */
+//    func didCancelledFloorRequest(_ Data: [Any]?) {
+//      guard let dataDict = Data?[0] as? [String : Any], Data!.count>0 else {
+//            return
+//        }
+//        self.emitEvent(event: "room:didCancelledFloorRequest", data: dataDict)
+//    }
+    
+    /*
+    This ACK method for Participant , When he/she will cancel their request floor*/
+//    func didFloorCancelled(_ Data: [Any]?) {
+//     guard let dataDict = Data?[0] as? [String : Any], Data!.count>0 else {
+//            return
+//        }
+//        self.emitEvent(event: "room:didFloorCancelled", data: dataDict)
+//    }
+//
     
     //Room mute Delegates
     /* This delegate called when the room is muted by the moderator. Available to Moderator only. */
@@ -1017,6 +1401,125 @@ extension EnxRoomManager : EnxRoomDelegate
         self.emitEvent(event: "room:didFileDownloadFailed", data: Data)
     }
     
+    func room(_ room: EnxRoom, didFileUploadCancelled data: [Any]?) {
+        guard let Data = data?[0] as? [String : Any] else {
+            return
+        }
+        self.emitEvent(event: "room:didFileUploadCancelled", data: Data)
+    }
+    
+    func room(_ room: EnxRoom, didFileDownloadCancelled data: [Any]?) {
+        guard let Data = data?[0] as? [String : Any] else {
+            return
+        }
+        self.emitEvent(event: "room:didFileDownloadCancelled", data: Data)
+    }
+    
+    func room(_ room: EnxRoom, didInitFileDownload data: [Any]?) {
+        guard let Data = data?[0] as? [String : Any] else {
+            return
+        }
+        self.emitEvent(event: "room:didInitFileDownload", data: Data)
+    }
+    
+    func room(_ room: EnxRoom?, didLockRoom data: [Any]?) {
+        guard let Data = data?[0] as? [String : Any] else {
+            return
+        }
+        self.emitEvent(event: "room:didLockRoom", data: Data)
+    }
+    
+    func room(_ room: EnxRoom?, didUnlockRoom data: [Any]?) {
+        guard let Data = data?[0] as? [String : Any] else {
+            return
+        }
+        self.emitEvent(event: "room:didUnlockRoom", data: Data)
+    }
+    
+    func room(_ room: EnxRoom?, didAckLockRoom data: [Any]?) {
+       guard let Data = data?[0] as? [String : Any] else {
+            return
+        }
+        self.emitEvent(event: "room:didAckLockRoom", data: Data)
+    }
+    
+    func room(_ room: EnxRoom?, didAckUnlockRoom data: [Any]?) {
+       guard let Data = data?[0] as? [String : Any] else {
+            return
+        }
+        self.emitEvent(event: "room:didAckUnlockRoom", data: Data)
+    }
+    
+    func room(_ room: EnxRoom?, didOutBoundCallInitiated data: [Any]?)
+    {
+        guard let Data = data?[0] as? [String : Any] else {
+            return
+        }
+        self.emitEvent(event: "room:didOutBoundCallInitiated", data: Data)
+    }
+    
+    func room(_ room: EnxRoom?, didDialStateEvents state: EnxOutBoundCallState) {
+      self.emitEvent(event: "room:didDialStateEvents", data: state)
+    }
+    
+    func room(_ room: EnxRoom?, didAckDropUser data: [Any]?) {
+     guard let Data = data?[0] as? [String : Any] else {
+        return
+      }
+      self.emitEvent(event: "room:didAckDropUser", data: Data)
+    }
+    
+    func room(_ room: EnxRoom?, didAckDestroy data: [Any]?) {
+     guard let Data = data?[0] as? [String : Any] else {
+          return
+     }
+      self.emitEvent(event: "room:didAckDestroy", data: Data)
+    }
+    
+    
+    func room(_ room: EnxRoom?, didAnnotationStarted Data: [Any]?) {
+      guard let data = Data?[0] as? [String : Any] else {
+        return
+      }
+      self.emitEvent(event: "room:didAnnotationStarted", data: data)
+    }
+    
+    func room(_ room: EnxRoom?, didStartAnnotationACK Data: [Any]?) {
+     guard let data = Data?[0] as? [String : Any] else {
+       return
+     }
+     self.emitEvent(event: "room:didStartAnnotationACK", data: data)
+    }
+    
+    func room(_ room: EnxRoom?, didAnnotationStopped Data: [Any]?) {
+     guard let data = Data?[0] as? [String : Any] else {
+       return
+      }
+      self.emitEvent(event: "room:didAnnotationStopped", data: data)
+    }
+    
+    func room(_ room: EnxRoom?, didStoppedAnnotationACK Data: [Any]?) {
+      guard let data = Data?[0] as? [String : Any] else {
+        return
+      }
+      self.emitEvent(event: "room:didStoppedAnnotationACK", data: data)
+    }
+    
+    func room(_ room: EnxRoom?, didConferencessExtended data: [Any]?) {
+     guard let Data = data?[0] as? [String : Any] else {
+        return
+     }
+    self.emitEvent(event: "room:didConferencessExtended", data: Data)
+    }
+    
+    func room(_ room: EnxRoom?, didConferenceRemainingDuration data: [Any]?) {
+        guard let Data = data?[0] as? [String : Any] else {
+            return
+         }
+        self.emitEvent(event: "room:didConferenceRemainingDuration", data: Data)
+    }
+    
+    
 }
 
 extension EnxRoomManager :  EnxStreamDelegate
@@ -1147,7 +1650,7 @@ extension EnxRoomManager : EnxPlayerDelegate
     }
     
     func didCapturedView(_ snapShot: UIImage) {
-        guard let imageData = UIImagePNGRepresentation(snapShot) else {
+        guard let imageData = snapShot.pngData() else {
             return;
         }
         let base64String = imageData.base64EncodedString(options: NSData.Base64EncodingOptions(rawValue: 0))

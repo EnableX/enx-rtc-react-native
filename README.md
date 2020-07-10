@@ -1,11 +1,5 @@
 # enx-rtc-react-native
 
-## Demo
-
-Visit Demo Zone (https://portal.enablex.io/demo-zone/) to request a Guided Demo or Demo Access to different type of application available there.
-
-You may also try our Video Meeting and Webinar solutions here: https://web.enablex.io/ucaas/covid-19/
-
 ## Getting started
 
 ## Pre-Requisites:
@@ -48,7 +42,6 @@ end
 4. In case if you want Autolinking then don't do step 3. Add following in podfile:
       ...
       pod 'enx-rtc-react-native', :path => '../node_modules/enx-rtc-react-native/ios/RNEnxRtc.podspec'
-      Note:- Kindly make sure "Bitcode" = No in your project.
       ...
       
 5. Now run, `pod install`
@@ -117,4 +110,5 @@ import Enx from 'enx-rtc-react-native';
 // TODO: What to do with the module?
 Enx;
 ```
-  
+ ## Extra Notes 
+ Check ExtraNotes file in case of any issue.

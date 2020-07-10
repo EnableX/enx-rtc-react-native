@@ -1,7 +1,7 @@
 import { reassignEvents } from "./EnxHelper";
 import { isString, isBoolean } from "underscore";
 
-const sanitizeRoomEvents = events => {
+const sanitizeRoomEvents = (events) => {
   try {
     if (typeof events !== "object") {
       return {};
@@ -47,11 +47,11 @@ const sanitizeRoomEvents = events => {
         floorRequestReceived:
           "didFloorRequestReceived" /* Event for Moderatoron any Floor Request raised by the participant. This is for Moderator only. */,
         grantFloorRequested:
-          "didGrantFloorRequested" /* Event for Participant when the moderator performs action grantFloor. */,
+          "didGrantedFloorRequest" /* Event for Participant when the moderator performs action grantFloor. */,
         denyFloorRequested:
-          "didDenyFloorRequested" /* Event for Participant when the moderator performs action denyFloor. */,
+          "didDeniedFloorRequest" /* Event for Participant when the moderator performs action denyFloor. */,
         releaseFloorRequested:
-          "didReleaseFloorRequested" /* Event for Participant when the moderator performs action releaseFloor. */,
+          "didReleasedFloorRequest" /* Event for Participant when the moderator performs action releaseFloor. */,
         mutedAllUser:
           "didMutedAllUser" /* Event for called when the room is muted by the moderator. Available to Moderator only. */,
         unmutedAllUser:
@@ -95,21 +95,51 @@ const sanitizeRoomEvents = events => {
           "didAdvanceOptionsUpdate" /* Event will notify advance options update. */,
         getAdvancedOptions: "didGetAdvanceOptions",
         capturedView:
-          "didCapturedView", /* Event will provide base64 string of captured screen shot image. */
+          "didCapturedView" /* Event will provide base64 string of captured screen shot image. */,
         userDataReceived:
-          "didUserDataReceived", /* Event called to receive custom signaling event message at room Level. */
+          "didUserDataReceived" /* Event called to receive custom signaling event message at room Level. */,
         messageReceived: "didMessageReceived", // Event called to receive message at room Level.
         acknowledgeSendData: "didAcknowledgSendData", // Event called on acknowledge send Data.
         acknowledgeSwitchUserRole: "didSwitchUserRole", // Event called on acknowledge switch user role.
         userRoleChanged: "didUserRoleChanged", // Event called on user role change.
-        fileUploaded: "didFileUploaded",// Event called file is upload successfull.
-        fileAvailable: "didFileAvailable",// Event called When File available to download.
-        fileUploadStarted: "didFileUploadStarted",// Event called When any of the user in same room will start sharing file.
-        fileUploadFailed: "didFileUploadFailed",// Event called upload file is failed.
-        initFileUpload: "didInitFileUpload",// Event called When self user will start sharing file.
-        fileDownloaded: "didFileDownloaded",// Event called When download of file success.
+        fileUploaded: "didFileUploaded", // Event called file is upload successfull.
+        fileAvailable: "didFileAvailable", // Event called When File available to download.
+        fileUploadStarted: "didFileUploadStarted", // Event called When any of the user in same room will start sharing file.
+        fileUploadFailed: "didFileUploadFailed", // Event called upload file is failed.
+        initFileUpload: "didInitFileUpload", // Event called When self user will start sharing file.
+        fileDownloaded: "didFileDownloaded", // Event called When download of file success.
         fileDownloadFailed: "didFileDownloadFailed", // Event called When file download failed.
-        availableFiles: "didAvailableFiles"
+        availableFiles: "didAvailableFiles", //Event when file is available
+        initFileDownload: "didInitFileDownload", // To init file Download
+        fileUploadCancelled: "didFileUploadCancelled", // When user canel file upload
+        fileDownloadCancelled: "didFileDownloadCancelled", // when user cancel download file
+        whoAmI: "whoAmI", //To get self connected user details
+        lockedRoom: "didLockRoom", //Event when room is locked
+        unLockedRoom: "didUnlockRoom", //Event when room is unlocked
+        ackUnLockRoom: "didAckLockRoom", //Event on acknowledge room locked for moderator
+        ackLockRoom: "didAckUnlockRoom", //Event on acknowledge room unlocked for moderator
+        outBoundCallInitiated: "didOutBoundCallInitiated", //Event when outbound call initiated
+        dialStateEvents: "didDialStateEvents", // Event to get state of dial events.
+        ackDropUser: "didAckDropUser", //Event on acknowledge drop user for moderator
+        ackDestroy: "didAckDestroy", //Event on acknowledge destroy room for moderator
+        getReceiveVideoQuality: "getReceiveVideoQuality", //Event to get receive video quality
+        annotationStarted: "didAnnotationStarted", //Event on annotation started
+        startAnnotationAck: "didStartAnnotationACK", //Event on start annotation acknowledge
+        annotationStopped: "didAnnotationStopped", //Event on annotation stopped
+        stoppedAnnotationAck: "didStoppedAnnotationACK", //Event on stopped annotation acknowledge
+        getRole: "getRole", //Event to get user self role(participant or moderator)
+        getClientId: "getClientId", //Event to get user self clientId
+        getRoomId: "getRoomId", //Event to get roomId if client is connected
+        getClientName: "clientName", //Event to get self clientName
+        isRoomActiveTalker: "isRoomActiveTalker", // Event to get room is available with activeTalker event or not
+        getUserList: "getUserList", //Event to get all available users in room
+        conferencessExtended: "didConferencessExtended", // Event on extend room duration
+        conferenceRemainingDuration: "didConferenceRemainingDuration",
+        getRoomMetadata: "getRoomMetadata", // Event to get room metaData
+        //finishedFloorRequest: "didFinishedFloorRequest", //This event will notify to all available moderator, Once any participant has finished there floor request
+        //floorFinished: "didFloorFinished", //This ACK event for Participant , When he/she will finished their request floor after request floor accepted by any moderator
+        //cancelledFloorRequest: "didCancelledFloorRequest",// This event method will notify to all available moderator, Once any participant has canceled there floor request
+        //floorCancelled: "didFloorCancelled",// This ACK event for Participant , When he/she will cancel their request floor
       },
       android: {
         roomConnected: "onRoomConnected",
@@ -157,20 +187,37 @@ const sanitizeRoomEvents = events => {
         capturedView: "OnCapturedView",
         getAdvancedOptions: "onGetAdvancedOptions",
         advancedOptionsUpdate: "onAdvancedOptionsUpdate",
-        userDataReceived :"onUserDataReceived",
+        userDataReceived: "onUserDataReceived",
         messageReceived: "onMessageReceived",
         acknowledgeSendData: "onAcknowledgedSendData",
         acknowledgeSwitchUserRole: "onSwitchedUserRole",
-        userRoleChanged : "onUserRoleChanged",
-        fileUploadStarted:"onFileUploadStarted",
-        initFileUpload:"onInitFileUpload",
-        fileAvailable:"onFileAvailable",
-        fileUploaded:"onFileUploaded",
-        fileUploadFailed:"onFileUploadFailed",
-        fileDownloaded:"onFileDownloaded",
-        fileDownloadFailed:"onFileDownloadFailed",
-         availableFiles: "getAvailableFiles"
-      }
+        userRoleChanged: "onUserRoleChanged",
+        fileUploadStarted: "onFileUploadStarted",
+        initFileUpload: "onInitFileUpload",
+        fileAvailable: "onFileAvailable",
+        fileUploaded: "onFileUploaded",
+        fileUploadFailed: "onFileUploadFailed",
+        fileDownloaded: "onFileDownloaded",
+        fileDownloadFailed: "onFileDownloadFailed",
+        availableFiles: "getAvailableFiles",
+        initFileDownload: "onInitFileDownload",
+        fileUploadCancelled: "onFileUploadCancelled",
+        fileDownloadCancelled: "onFileDownloadCancelled",
+        lockedRoom: "onLockedRoom",
+        unLockedRoom: "onUnLockedRoom",
+        ackUnLockRoom: "onAckUnLockRoom",
+        ackLockRoom: "onAckLockRoom",
+        outBoundCallInitiated: "onOutBoundCallInitiated",
+        dialStateEvents: "onDialStateEvents",
+        conferencessExtended: "onConferencessExtended",
+        conferenceRemainingDuration: "onConferenceRemainingDuration",
+        ackDropUser: "onAckDropUser",
+        ackDestroy: "onAckDestroy",
+        annotationStarted: "onAnnotationStarted",
+        startAnnotationAck: "onStartAnnotationAck",
+        annotationStopped: "onAnnotationStopped",
+        stoppedAnnotationAck: "onStoppedAnnotationAck",
+      },
     };
     return reassignEvents("room", customEvents, events);
   } catch (error) {
@@ -178,7 +225,7 @@ const sanitizeRoomEvents = events => {
   }
 };
 
-const sanitizeLocalInfoData = localInfo => {
+const sanitizeLocalInfoData = (localInfo) => {
   if (typeof localInfo !== "object") {
     return {
       audio: false,
@@ -192,7 +239,7 @@ const sanitizeLocalInfoData = localInfo => {
       minWidth: "",
       minHeight: "",
       maxWidth: "",
-      maxHeight: ""
+      maxHeight: "",
     };
   }
   return {
@@ -207,45 +254,49 @@ const sanitizeLocalInfoData = localInfo => {
     minWidth: validateString(localInfo.minWidth),
     minHeight: validateString(localInfo.minHeight),
     maxWidth: validateString(localInfo.maxWidth),
-    maxHeight: validateString(localInfo.maxHeight)
+    maxHeight: validateString(localInfo.maxHeight),
   };
 };
 
-const sanitizeRoomData = roomInfo => {
+const sanitizeRoomData = (roomInfo) => {
   if (typeof roomInfo !== "object") {
     return {
       allow_reconnect: false,
       number_of_attempts: "",
       timeout_interval: "",
-      audio_only: false
+      audio_only: false,
     };
   }
   return {
     allow_reconnect: validateBoolean(roomInfo.allow_reconnect),
     number_of_attempts: validateString(roomInfo.number_of_attempts),
     timeout_interval: validateString(roomInfo.timeout_interval),
-    audio_only: validateBoolean(roomInfo.audio_only)
+    audio_only: validateBoolean(roomInfo.audio_only),
   };
 };
 
-const sanitizeAdvanceOptions = advanceOptionsInfo => {
+const sanitizeAdvanceOptions = (advanceOptionsInfo) => {
   if (typeof advanceOptionsInfo !== "object") {
     return [
-      {battery_updates: false},
-      {notify_video_resolution_change: false}
-           ];
+      { battery_updates: false },
+      { notify_video_resolution_change: false },
+    ];
   }
   return [
-    {battery_updates: validateBoolean(advanceOptionsInfo.battery_updates)},
-    {notify_video_resolution_change: validateBoolean(advanceOptionsInfo.notify_video_resolution_change)}
-         ];
+    { battery_updates: validateBoolean(advanceOptionsInfo.battery_updates) },
+    {
+      notify_video_resolution_change: validateBoolean(
+        advanceOptionsInfo.notify_video_resolution_change
+      ),
+    },
+  ];
 };
 
-const validateString = value => (isString(value) ? value : "");
+const validateString = (value) => (isString(value) ? value : "");
 
-const validateBoolean = value => (isBoolean(value) ? value : false);
+const validateBoolean = (value) => (isBoolean(value) ? value : false);
 
-const sanitizeBooleanProperty = property =>
+const sanitizeBooleanProperty = (property) =>
   property || property === undefined ? true : property;
 
 export {
@@ -253,5 +304,5 @@ export {
   sanitizeLocalInfoData,
   sanitizeBooleanProperty,
   sanitizeRoomData,
-  sanitizeAdvanceOptions
+  sanitizeAdvanceOptions,
 };

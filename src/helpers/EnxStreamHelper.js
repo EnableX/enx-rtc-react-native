@@ -21,7 +21,16 @@ const sanitizePlayerViewEvents = events => {
       remoteStreamAudioUnMute:'didRemoteStreamAudioUnMute', /* Event called when a self unmute audio alert participant received from server. */
       remoteStreamVideoMute:'didRemoteStreamVideoMute', /* Event called when a self mute video alert participant received from server. */
       remoteStreamVideoUnMute:'didRemoteStreamVideoUnMute', /* Event called when a self unmute video alert participant received from server. */
-      playerStats: 'didPlayerStats'  /* Event called to receive particular player stats */
+      playerStats: 'didPlayerStats',  /* Event called to receive particular player stats */
+      isLocal: "isLocal", /* Event to check stream is local or remote*/
+      hasScreen: "hasScreen", /* Event to check screen share stream or not*/
+      hasAudio: "hasAudio", /* Event to check stream has audio data*/
+      hasVideo: "hasVideo", /* Event to check stream has video data*/
+      hasData: "hasData", /* Event to check stream has data*/
+      isAudioOnlyStream: "isAudioOnlyStream", /* Event to check stream is Audio only mode*/
+      getReasonForMuteVideo: "getReasonForMuteVideo", /* Event to get reason of stream muted*/
+      getMediaType: "getMediaType", /* Event to get media type of stream*/
+      getVideoAspectRatio: "getVideoAspectRatio" /* Event to get video aspect ratio of stream*/
     },
     android: {
       audioEvent: 'onAudioEvent',

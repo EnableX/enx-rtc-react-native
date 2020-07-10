@@ -127,7 +127,113 @@ RCT_EXTERN_METHOD(sendFiles:(NSString *)position isBroadcast:(BOOL)isBroadcast c
 
 RCT_EXTERN_METHOD(downloadFile:(NSDictionary *)file autoSave:(BOOL)autoSave)
 
+//To get available files
 RCT_EXTERN_METHOD(getAvailableFiles)
 
+//To cancel file upload with job Id.
+RCT_EXTERN_METHOD(cancelUpload:(NSString *)jobId)
+
+//To cancel file download with job Id.
+RCT_EXTERN_METHOD(cancelDownload:(NSString *)jobId)
+
+//To cancel all upload files
+RCT_EXTERN_METHOD(cancelAllUploads)
+
+//To cancal all download files.
+RCT_EXTERN_METHOD(cancelAllDownloads)
+
+//To get self client details
+RCT_EXTERN_METHOD(whoAmI)
+
+//To lock room. No particpannt can join when room is lock
+RCT_EXTERN_METHOD(lockRoom)
+
+//To unlock room
+RCT_EXTERN_METHOD(unlockRoom)
+
+//To make outbound call
+RCT_EXTERN_METHOD(makeOutboundCall:(NSString *)number)
+
+//To drop any client from the connected room
+RCT_EXTERN_METHOD(dropUser:(NSArray *)clientIds)
+
+//To destroy the connected room. With this method all participant will get disconnected
+RCT_EXTERN_METHOD(destroy)
+
+
+//To enable proximity sensor
+RCT_EXTERN_METHOD(enableProximitySensor:(BOOL)value)
+
+//To set Audio Only mode
+RCT_EXTERN_METHOD(setAudioOnlyMode:(BOOL)audioOnly)
+
+//To set Receive video quality
+RCT_EXTERN_METHOD(setReceiveVideoQuality:(NSDictionary *)opt)
+
+// To get receive video quality
+RCT_EXTERN_METHOD(getReceiveVideoQuality:(NSString *)streamType)
+
+//To start annotation
+RCT_EXTERN_METHOD(startAnnotation:(NSString *)streamId)
+
+//To stop annotation
+RCT_EXTERN_METHOD(stopAnnotation)
+
+//To mute subscribers stream audio
+RCT_EXTERN_METHOD(muteSubscribeStreamsAudio:(BOOL)flag)
+
+// To get self client role
+RCT_EXTERN_METHOD(getRole)
+
+// To get self client Id
+RCT_EXTERN_METHOD(getClientId)
+
+//To get connected room Id
+RCT_EXTERN_METHOD(getRoomId)
+
+// To get client self name
+RCT_EXTERN_METHOD(getClientName)
+
+//To check room is with active talker or not
+RCT_EXTERN_METHOD(isRoomActiveTalker)
+
+//To get user list
+RCT_EXTERN_METHOD(getUserList)
+
+//To extend conference duration
+RCT_EXTERN_METHOD(extendConferenceDuration)
+
+//To get room meta data
+RCT_EXTERN_METHOD(getRoomMetadata)
+
+//To set zoom factor of remote client local stream.
+RCT_EXTERN_METHOD(setZoomFactor:(CGFloat)value clientIds(NSArray *)clientIds)
+
+// To get stream is local or not
+RCT_EXTERN_METHOD(isLocal:(NSString *)streamId)
+
+//To get stream has data or not
+RCT_EXTERN_METHOD(hasData:(NSString *)streamId)
+
+//To get stream has audio or not
+RCT_EXTERN_METHOD(hasAudio:(NSString *)streamId)
+
+//To get stream has video or not
+RCT_EXTERN_METHOD(hasVideo:(NSString *)streamId)
+
+//To get stream is screen share or not
+RCT_EXTERN_METHOD(hasScreen:(NSString *)streamId)
+
+//To get stream is audio only stream
+RCT_EXTERN_METHOD(isAudioOnlyStream:(NSString *)streamId)
+
+//To get reason for video mute for stream
+RCT_EXTERN_METHOD(getReasonForMuteVideo:(NSString *)streamId)
+
+//To get stream media type
+RCT_EXTERN_METHOD(getMediaType:(NSString *)streamId)
+
+//To get stream video aspect ratio
+RCT_EXTERN_METHOD(getVideoAspectRatio:(NSString *)streamId)
 
 @end
