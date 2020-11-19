@@ -112,3 +112,8 @@ Enx;
 ```
  ## Extra Notes 
  Check ExtraNotes file in case of any issue.
+ 
+ ## Trial 
+ Try a quick Video Call: https://try.enablex.io/ 
+Sign up for a free trial https://portal.enablex.io/cpaas/trial-sign-up/
+
