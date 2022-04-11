@@ -21,10 +21,10 @@
 `$ react-native link enx-rtc-react-native`
 
 
-#### iOS Installation
+#### IOS Installation
 **Note:** Please make sure to have [CocoaPods](https://cocoapods.org/) on your computer.
 If you've installed this package before, you may need to edit your `Podfile` and project structure because the installation process has changed.
-1. In you terminal, change into the `ios` directory of your React Native project.
+1. In your terminal, change into the `ios` directory of your React Native project.
 
 2. Create a pod file by running: `pod init`.
 
