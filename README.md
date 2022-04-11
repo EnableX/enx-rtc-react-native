@@ -2,7 +2,7 @@
 
 ## Getting started
 
-## Pre-Requisites:
+## Prerequisites:
 
 1. Install [node.js](https://nodejs.org/)
 
