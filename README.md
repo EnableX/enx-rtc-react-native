@@ -7,10 +7,10 @@
 1. Install [node.js](https://nodejs.org/)
 
 2. Install and update [Xcode](https://developer.apple.com/xcode/) (you will need a Mac)
-* React Native iOS installation [instructions](https://facebook.github.io/react-native/docs/getting-started.html)
+* React Native iOS installation [instructions](https://reactnative.dev/docs/environment-setup)
 
 3. Install and update [Android Studio](https://developer.android.com/studio/index.html)
-* React Native Android installation [instructions](https://facebook.github.io/react-native/docs/getting-started.html)
+* React Native Android installation [instructions](https://reactnative.dev/docs/environment-setup)
 
 ## Installation:
 
