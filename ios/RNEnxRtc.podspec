@@ -19,7 +19,7 @@ s.source       = { :git => "https://github.com/EnableX/enx-rtc-react-native.git"
   s.requires_arc = true
 
   s.dependency "React"
-  s.dependency "EnxRTCiOS", '1.6.0'
+  s.dependency "EnxRTCiOS", '2.3.4'
   s.dependency 'Socket.IO-Client-Swift', '~> 15.0.0'
 end
 
