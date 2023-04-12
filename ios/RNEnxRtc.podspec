@@ -10,11 +10,11 @@ Pod::Spec.new do |s|
   s.license      = { :type => 'Vcloudx License, Version 1.1', :text => 'https://www.enablex.io/legals/tou/'}
   s.authors      = { 'enablex' => 'https://github.com/enablexer' }
   s.homepage     = 'https://developer.enablex.io/api/client-api/ios-toolkit/'
-  s.platform     = :ios, "10.0"
+  s.platform     = :ios
 
 s.source       = { :git => "https://github.com/EnableX/enx-rtc-react-native.git", :tag => "master" }
 
-  
+  s.ios.deployment_target = '13.0'
   s.source_files  = "**/*.{h,m,swift}"
   s.requires_arc = true
 
