@@ -1,4 +1,4 @@
-# enx-rtc-react-native
+# EnableX Click2Call Application: Simplify Voice Communication with Dialer SDK for Real-Time Calls
 
 ## Getting started
 
