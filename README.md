@@ -115,5 +115,5 @@ Enx;
  
  ## Trial 
  Try a quick Video Call: https://try.enablex.io/ <br/>
-Sign up for a free trial https://portal.enablex.io/cpaas/trial-sign-up/
+Sign up for a free trial https://www.enablex.io/free-trial/
 
